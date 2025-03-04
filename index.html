@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grade Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        form { max-width: 400px; margin: auto; background: #f4f4f4; padding: 20px; border-radius: 8px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; background: blue; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Student Grade Predictor</h2>
+    <form id="prediction-form">
+        <input type="number" id="attendance" placeholder="Attendance (%)" required><br>
+        <input type="number" id="study_hours" placeholder="Study Hours per Week" required><br>
+        <input type="number" id="assignment_score" placeholder="Assignment Score" required><br>
+        <button type="submit">Predict Grade</button>
+    </form>
+
+    <h3 id="result"></h3>
+
+    <script>
+        document.getElementById("prediction-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let attendance = document.getElementById("attendance").value;
+            let studyHours = document.getElementById("study_hours").value;
+            let assignmentScore = document.getElementById("assignment_score").value;
+
+            fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    attendance: parseFloat(attendance), 
+                    study_hours: parseFloat(studyHours), 
+                    assignment_score: parseFloat(assignmentScore) 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerText = "Predicted Grade: " + data.grade;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
